@@ -1,15 +1,22 @@
 class CommentPolicy < ApplicationPolicy
-  attr_reader :current_user, :comments
 
-  def initialize(current_user, user)
-    @current_user = current_user
-    @user = user
+  def create?
+    author? || 
+    !record.author.private? ||
+    user.leaders.include?(record.author)
   end
 
-  def show?
-    user == current_user ||
-     !user.private? || 
-     user.followers.include?(current_user)
+  def update?
+    author?
   end
 
+  def destroy?
+    author?
+  end
+
+  private
+
+  def author?
+    user == record.author
+  end
 end
