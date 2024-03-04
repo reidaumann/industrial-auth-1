@@ -1,6 +1,8 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: %i[ show edit update destroy ]
-  before_action :is_an_authorized_user, only: [:destroy, :create]
+  before_action(except: [:new, :create]) { authorize(@comment || Comment) }
+  skip_after_action :verify_authorized, only: :create 
+  
 
   # GET /comments or /comments.json
   def index
